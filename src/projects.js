@@ -14,3 +14,4 @@ function createProject(title) {
     },
   };
 }
+export default createProject;

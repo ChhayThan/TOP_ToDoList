@@ -1,6 +1,84 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+
+  --text: rgb(51, 160, 255);
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  background-color: black;
+}
+
+body {
+  display: grid;
+
+  grid-template-columns: minmax(350px, 30vh) 1fr;
+  grid-template-rows: 1fr;
+}
+
+#white {
+  color: rgb(159, 166, 172);
+  text-decoration: underline;
+  text-decoration-color: var(--text);
+}
+
+#sidebar {
+  grid-column: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  height: 100vh;
+
+  background-color: rgb(246, 251, 255);
+}
+
+#content {
+  grid-column: 2 / 3;
+}
+
+#content,
+#sidebar {
+  padding-left: 20px;
+  padding-top: 25px;
+}
+
+.sidebar_content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tasksOptions {
+  display: flex;
+  flex-direction: column;
+
+  padding: 10px;
+}
+.tasksOptions,
+.btn {
+  background-color: rgb(246, 251, 255);
+  border: none;
+  font-size: 12pt;
+  gap: 10px;
+}
+.tasksOptions .btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.tasksOptions .btn:hover {
+  background-color: aliceblue;
+}
+
+.tasksOptions .btn:active {
+  background-color: aliceblue;
+  box-shadow: 0 1px rgb(224, 241, 255);
+  transform: translateY(4px);
 }

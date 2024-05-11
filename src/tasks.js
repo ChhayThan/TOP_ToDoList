@@ -1,10 +1,10 @@
-function tasks(title, description, dueDate, priority) {
-  return { title, description, dueDate, priority };
+function tasks(title, description, dueDate, priority, key) {
+  return { title, description, dueDate, priority, key };
 }
 
-function createTask(title, description, dueDate, priority) {
-  const task = tasks(title, description, dueDate, priority);
+function createTask(title, description, dueDate, priority, key) {
+  const task = tasks(title, description, dueDate, priority, key);
   return task;
 }
 
-console.log(createTask("Workout", "Movati Gym", "2024-05-10", "high"));
+export default createTask;

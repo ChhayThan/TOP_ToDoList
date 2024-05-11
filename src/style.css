@@ -14,7 +14,7 @@
 body {
   display: grid;
 
-  grid-template-columns: minmax(350px, 30vh) 1fr;
+  grid-template-columns: minmax(200px, 350px) minmax(500px, 1fr);
   grid-template-rows: 1fr;
 }
 

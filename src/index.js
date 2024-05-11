@@ -2,14 +2,54 @@ import "./style.css";
 import createTask from "./tasks";
 import createProject from "./projects";
 
-const task1 = createTask("Workout", "Movati Gym", "2024-05-10", "high", 1);
+const openModalButtons = document.querySelectorAll("[data-modal-target]");
+const closeModalButtons = document.querySelectorAll("[data-close-modal]");
+const overlay = document.getElementById("overlay");
 
-const workProject = createProject("Work");
-workProject.addTask(task1);
+openModalButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const modal = document.querySelector(button.dataset.modalTarget);
+    openModal(modal);
+  });
+});
 
-console.log(workProject);
-console.log(workProject.taskList[0]);
+closeModalButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const modal = document.querySelector(button.dataset.closeModal);
+    closeModal(modal);
+  });
+});
 
-workProject.removeTask(task1);
+overlay.addEventListener("click", () => {
+  const modals = document.querySelectorAll(".modal.active");
+  console.log(modals);
+  modals.forEach((modal) => {
+    closeModal(modal);
+  });
+});
 
-console.log(workProject);
+function openModal(modal) {
+  if (modal == null) {
+    return;
+  }
+  modal.classList.add("active");
+  overlay.classList.add("active");
+}
+
+function closeModal(modal) {
+  if (modal == null) return;
+  modal.classList.remove("active");
+  overlay.classList.remove("active");
+}
+
+// const task1 = createTask("Workout", "Movati Gym", "2024-05-10", "high", 1);
+
+// const workProject = createProject("Work");
+// workProject.addTask(task1);
+
+// console.log(workProject);
+// console.log(workProject.taskList[0]);
+
+// workProject.removeTask(task1);
+
+// console.log(workProject);

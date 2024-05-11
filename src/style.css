@@ -68,6 +68,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: left;
+  cursor: pointer;
 
   padding: 10px;
   border-radius: 10px;
@@ -79,6 +80,177 @@ body {
 
 .tasksOptions .btn:active {
   background-color: aliceblue;
+  box-shadow: 0 1px rgb(224, 241, 255);
+  transform: translateY(4px);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -200%) scale(0);
+  transition: 200ms ease-in-out;
+
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgb(210, 210, 210);
+  z-index: 10;
+
+  background-color: white;
+
+  width: 500px;
+  max-width: 80%;
+}
+
+.modal.active {
+  transform: translate(-50%, -100%) scale(1);
+}
+
+.modal-header {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid rgb(210, 210, 210);
+  border-width: 80%;
+}
+
+.modal-header .modal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-header .close-modal {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: white;
+  font-size: 1.25rem;
+
+  color: rgb(175, 175, 175);
+}
+
+.modal-content {
+  padding: 10px 15px;
+}
+
+#overlay {
+  position: fixed;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+input#taskTitle {
+  border: none;
+  font-size: 1.25rem;
+  padding: 10px;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+}
+
+textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+}
+
+.custom-select {
+  min-width: 100px;
+  position: relative;
+}
+
+select,
+input[type="date"] {
+  appearance: none;
+  /*  safari  */
+  -webkit-appearance: none;
+  /*  other styles for aesthetics */
+  width: auto;
+  font-size: 1.15rem;
+  padding: 5px;
+  background-color: #fff;
+  border: 1px solid #caced1;
+  border-radius: 0.25rem;
+  color: rgb(139, 139, 139);
+  cursor: pointer;
+}
+
+.custom-select::before,
+.custom-select::after {
+  --size: 0.3rem;
+  content: "";
+  position: absolute;
+  right: 1rem;
+  pointer-events: none;
+}
+
+.custom-select::before {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-bottom: var(--size) solid black;
+  top: 40%;
+}
+
+.custom-select::after {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-top: var(--size) solid black;
+  top: 55%;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content .inputItem {
+  padding: 10px;
+  font-weight: bold;
+}
+
+.modal-content .modalBtn {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modalBtn button {
+  padding: 10px;
+  width: 30%;
+  border: none;
+  border-radius: 1px;
+}
+
+button.close-modal {
+  background-color: rgb(230, 230, 230);
+}
+button.close-modal:hover {
+  background-color: rgb(244, 244, 244);
+}
+
+button.add_task {
+  background-color: var(--text);
+  font-weight: bold;
+  color: white;
+}
+
+button.add_task:hover {
+  background-color: rgb(99, 182, 255);
+}
+
+.modalBtn button:active {
   box-shadow: 0 1px rgb(224, 241, 255);
   transform: translateY(4px);
 }

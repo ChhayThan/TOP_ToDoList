@@ -12,7 +12,7 @@
       </div>
       <div class="sidebar_content">
         <div class="tasksOptions">
-          <button class="btn add_task">Add Task</button>
+          <button data-modal-target="#modal" class="btn">Add Task</button>
           <button class="btn allTasks">All tasks</button>
           <button class="btn todayTasks">Today</button>
           <button class="btn overDue">Overdue</button>
@@ -33,5 +33,45 @@
         </label>
       </div>
     </div>
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <div class="modal-title">
+          <input type="text" id="taskTitle" placeholder="Task Name" required />
+        </div>
+        <button data-close-modal="#modal" class="close-modal">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="inputItem">
+          <textarea
+            name="description"
+            id="description"
+            placeholder="Description"
+          ></textarea>
+        </div>
+        <div class="inputItem">
+          <label for="dueDate">Due Date:</label>
+          <input type="date" name="dueDate" id="dueDate" required />
+        </div>
+        <div class="inputItem">
+          <label for="priority">Priority:</label>
+          <select class="custom-select" name="priority" id="priority">
+            <option value="default">High</option>
+            <option value="default">Medium</option>
+            <option value="default">Low</option>
+          </select>
+        </div>
+        <div class="inputItem">
+          <label for="project">Project:</label>
+          <select class="custom-select" name="project" id="project">
+            <option value="default">None</option>
+          </select>
+        </div>
+        <div class="modalBtn">
+          <button data-close-modal="#modal" class="close-modal">Cancel</button>
+          <button class="add_task">Save</button>
+        </div>
+      </div>
+    </div>
+    <div id="overlay"></div>
   </body>
 </html>

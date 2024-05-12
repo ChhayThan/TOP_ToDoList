@@ -232,7 +232,13 @@ textarea {
   padding: 10px;
   width: 30%;
   border: none;
-  border-radius: 1px;
+  border-radius: 10px;
+}
+.modalBtn button.close-modal:active,
+.modalBtn button.add-task.active:active {
+  background-color: aliceblue;
+  box-shadow: 0 1px rgb(224, 241, 255);
+  transform: translateY(4px);
 }
 
 button.close-modal {

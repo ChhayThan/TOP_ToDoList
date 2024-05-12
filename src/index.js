@@ -42,14 +42,37 @@ function closeModal(modal) {
   overlay.classList.remove("active");
 }
 
-// const task1 = createTask("Workout", "Movati Gym", "2024-05-10", "high", 1);
+const checkBtn = document.querySelectorAll(".checkBtn");
 
-// const workProject = createProject("Work");
-// workProject.addTask(task1);
+checkBtn.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    const h3 = document.querySelector(`div[data-taskKey="${index}"] h3`);
+    console.log(index);
+    if (button.classList.contains("cancelled")) {
+      button.classList.remove("cancelled");
+      h3.classList.remove("cancelled");
+    } else {
+      button.classList.add("cancelled");
+      h3.classList.add("cancelled");
+    }
+  });
+});
 
-// console.log(workProject);
-// console.log(workProject.taskList[0]);
+const taskItems = document.querySelectorAll("div.taskItem");
 
-// workProject.removeTask(task1);
+taskItems.forEach((item, index) => {
+  const itemBtns = document.querySelectorAll(
+    `div[data-taskKey="${index}"] .taskOptions > button`
+  );
+  item.addEventListener("mouseenter", () => {
+    itemBtns.forEach((button) => {
+      button.classList.add("showBtn");
+    });
+  });
 
-// console.log(workProject);
+  item.addEventListener("mouseleave", () => {
+    itemBtns.forEach((button) => {
+      button.classList.remove("showBtn");
+    });
+  });
+});

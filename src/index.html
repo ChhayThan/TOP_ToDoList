@@ -8,37 +8,75 @@
   <body>
     <div id="sidebar">
       <div class="title">
-        <h1>Eric's <span id="white">todolist</span></h1>
+        <h1>Eric's <span id="special_decoration">todolist</span></h1>
       </div>
       <div class="sidebar_content">
         <div class="tasksOptions">
-          <button data-modal-target="#modal" class="btn">Add Task</button>
+          <button data-modal-target="#taskModal" class="btn">Add Task</button>
           <button class="btn allTasks">All tasks</button>
           <button class="btn todayTasks">Today</button>
           <button class="btn overDue">Overdue</button>
         </div>
         <div class="tasksOptions">
           <h3>My Projects</h3>
-          <button class="btn add_project">Add Project</button>
+          <button data-modal-target="#projectModal" class="btn add_project">
+            Add Project
+          </button>
         </div>
       </div>
     </div>
+
     <div id="content">
       <div class="contentTitle">
         <h1>Title</h1>
       </div>
       <div class="contentTasks">
-        <label class="form-control">
-          <input type="checkbox" name="checkbox" />
-        </label>
+        <div data-taskKey="0" class="taskItem">
+          <button class="checkBtn priorityHigh"></button>
+          <div class="taskContent">
+            <h3>Task 1 with High priority</h3>
+            <p>Description</p>
+          </div>
+          <div class="taskOptions">
+            <button class="editTask">edit</button>
+            <button class="removeTask">delete</button>
+          </div>
+        </div>
+
+        <div data-taskKey="1" class="taskItem">
+          <button class="checkBtn priorityMedium"></button>
+          <div class="taskContent">
+            <h3>Task 2 with Medium Priority</h3>
+            <p>Description</p>
+          </div>
+          <div class="taskOptions">
+            <button class="editTask">edit</button>
+            <button class="removeTask">delete</button>
+          </div>
+        </div>
+
+        <div data-taskKey="2" class="taskItem">
+          <button class="checkBtn priorityLow"></button>
+          <div class="taskContent">
+            <h3>Task 3 with Low Priority</h3>
+            <p>Description</p>
+          </div>
+          <div class="taskOptions">
+            <button class="editTask">edit</button>
+            <button class="removeTask">delete</button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="modal" id="modal">
+
+    <div class="modal" id="taskModal">
       <div class="modal-header">
         <div class="modal-title">
           <input type="text" id="taskTitle" placeholder="Task Name" required />
         </div>
-        <button data-close-modal="#modal" class="close-modal">&times;</button>
+        <button data-close-modal="#taskModal" class="close-modal">
+          &times;
+        </button>
       </div>
       <div class="modal-content">
         <div class="inputItem">
@@ -67,11 +105,43 @@
           </select>
         </div>
         <div class="modalBtn">
-          <button data-close-modal="#modal" class="close-modal">Cancel</button>
-          <button class="add_task">Save</button>
+          <button data-close-modal="#taskModal" class="close-modal">
+            Cancel
+          </button>
+          <button class="add_task">Add task</button>
         </div>
       </div>
     </div>
+    <div class="modal" id="projectModal">
+      <div class="modal-header">
+        <div class="modal-title">
+          <h1>Add project</h1>
+        </div>
+        <button data-close-modal="#projectModal" class="close-modal">
+          &times;
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="inputItem">
+          <div class="projectName">
+            <label for="projectTitle">#</label>
+            <input
+              type="text"
+              id="projectTitle"
+              placeholder="Project Name"
+              required
+            />
+          </div>
+        </div>
+        <div class="modalBtn">
+          <button data-close-modal="#projectModal" class="close-modal">
+            Cancel
+          </button>
+          <button class="add_task">Add</button>
+        </div>
+      </div>
+    </div>
+
     <div id="overlay"></div>
   </body>
 </html>

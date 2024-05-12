@@ -97,7 +97,7 @@ function createTaskModal() {
   projectSelect.setAttribute("name", "project");
   projectSelect.setAttribute("id", "project");
   const defaultOption = document.createElement("option");
-  defaultOption.setAttribute("value", "default");
+  defaultOption.setAttribute("value", "main");
   defaultOption.innerText = "None";
   projectSelect.appendChild(defaultOption);
   projectInput.appendChild(projectSelect);

@@ -1,36 +1,5 @@
-import createTask from "./tasks";
-import createProject from "./projects";
-
-const mainProject = createProject("main");
-const taskItem1 = createTask(
-  "Task 1 with High priority",
-  "Description",
-  "2024-05-12",
-  "High",
-  mainProject.taskList.length
-);
-
-mainProject.addTask(taskItem1);
-const taskItem2 = createTask(
-  "Task 2 with Medium priority",
-  "Description",
-  "2024-05-12",
-  "Medium",
-  mainProject.taskList.length
-);
-mainProject.addTask(taskItem2);
-const taskItem3 = createTask(
-  "Task 3 with Low priority",
-  "Description",
-  "2024-05-12",
-  "Low",
-  mainProject.taskList.length
-);
-mainProject.addTask(taskItem3);
-
-function renderAllTaskContent() {
-  const content = document.createElement("div");
-  content.setAttribute("id", "content");
+function renderAllTaskContent(mainProject) {
+  const content = document.querySelector("div#content");
 
   const contentTitle = document.createElement("div");
   contentTitle.classList.add("contentTitle");
@@ -46,9 +15,6 @@ function renderAllTaskContent() {
   taskItems.forEach((taskItem) => {
     contentTasks.appendChild(taskItem);
   });
-
-  // generateTaskItem(mainProject);
-  // contentTasks.appendChild(taskItem);
 
   content.appendChild(contentTasks);
 
@@ -66,7 +32,9 @@ function generateTaskItemArray(project) {
     const taskKey = task.key;
     const taskTitle = task.title;
     const taskDescription = task.description;
+    const taskDueDate = task.dueDate;
     const priorityClass = `priority${task.priority}`;
+    const taskProjectTitle = task.projectTitle;
     const taskItem = document.createElement("div");
     taskItem.setAttribute("data-taskKey", taskKey);
     taskItem.classList.add("taskItem");
@@ -81,8 +49,19 @@ function generateTaskItemArray(project) {
     h3.innerText = taskTitle;
     const p = document.createElement("p");
     p.innerText = taskDescription;
+    const dueDate = document.createElement("p");
+    dueDate.classList.add("taskDueDate");
+    dueDate.innerText = taskDueDate;
+    const taskProject = document.createElement("p");
+    taskProject.classList.add("taskProjectTitle");
+    // if (taskProjectTitle !== "main") {
+    //   taskProject.innerText = `#${taskProjectTitle}`;
+    // }
+    taskProject.innerText = `#${taskProjectTitle}`;
     taskContent.appendChild(h3);
     taskContent.appendChild(p);
+    taskContent.appendChild(dueDate);
+    taskContent.appendChild(taskProject);
     taskItem.appendChild(taskContent);
 
     const taskOptions = document.createElement("div");

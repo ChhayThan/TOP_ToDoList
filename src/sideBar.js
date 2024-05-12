@@ -1,6 +1,5 @@
 export default function renderSideBar() {
-  const sidebar = document.createElement("div");
-  sidebar.setAttribute("id", "sidebar");
+  const sidebar = document.querySelector("div#sidebar");
 
   const title = document.createElement("div");
   title.classList.add("title");

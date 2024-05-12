@@ -138,6 +138,7 @@ body {
   align-items: center;
   border-bottom: 2px solid rgb(210, 210, 210);
   border-width: 80%;
+  width: 100%;
 }
 
 .modal-header .modal-title {
@@ -180,6 +181,7 @@ input#projectTitle {
   border: none;
   font-size: 1.25rem;
   padding: 10px;
+  width: 300px;
 }
 input#projectTitle {
   border: 1px solid rgb(210, 210, 210);
@@ -256,6 +258,10 @@ button.add_task {
   cursor: not-allowed;
 }
 
+button.add_task.active {
+  cursor: pointer;
+}
+
 button.add_task.active:hover {
   background-color: rgb(99, 182, 255);
 }
@@ -327,6 +333,20 @@ input[type="date"] {
   padding-bottom: 20px;
 }
 
+.taskItem p.taskDueDate {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: rgb(80, 80, 80);
+}
+.taskItem p.taskProjectTitle {
+  font-style: italic;
+  width: 1rem;
+}
+.taskItem p.taskProjectTitle:hover {
+  font-weight: bold;
+  color: var(--titleColor);
+  cursor: pointer;
+}
 .taskItem .checkBtn {
   top: 50%;
   border: none;

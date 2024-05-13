@@ -48,31 +48,33 @@ function initializePage() {
   addTaskBtn.addEventListener("mouseover", () => {
     if (taskTitle.value !== "") {
       addTaskBtn.classList.add("active");
-      const activeAddTaskBtn = document.querySelector("button.add_task.active");
-      activeAddTaskBtn.addEventListener("click", () => {
-        const taskTitle = document.querySelector("input#taskTitle").value;
-        const taskDescription = document.querySelector(
-          "textarea#description"
-        ).value;
-        const dueDate = document.querySelector("input#dueDate").value;
-        const priorityClass = document.querySelector("select#priority").value;
-        const project = document.querySelector("select#project").value;
-
-        const taskToAdd = createTask(
-          taskTitle,
-          taskDescription,
-          dueDate,
-          priorityClass,
-          mainProject.title,
-          mainProject.taskList.length
-        );
-        mainProject.addTask(taskToAdd);
-        const taskModal = document.querySelector("div#taskModal");
-        closeModal(taskModal);
-        generateTasks(mainProject);
-      });
     } else if (taskTitle.value === "") {
       addTaskBtn.classList.remove("active");
+    }
+  });
+
+  addTaskBtn.addEventListener("click", () => {
+    if (addTaskBtn.classList.contains("active")) {
+      const taskTitle = document.querySelector("input#taskTitle").value;
+      const taskDescription = document.querySelector(
+        "textarea#description"
+      ).value;
+      const dueDate = document.querySelector("input#dueDate").value;
+      const priorityClass = document.querySelector("select#priority").value;
+      const project = document.querySelector("select#project").value;
+
+      const taskToAdd = createTask(
+        taskTitle,
+        taskDescription,
+        dueDate,
+        priorityClass,
+        mainProject.title,
+        mainProject.taskList.length
+      );
+      mainProject.addTask(taskToAdd);
+      const taskModal = document.querySelector("div#taskModal");
+      closeModal(taskModal);
+      generateTasks(mainProject);
     }
   });
 }
@@ -156,6 +158,8 @@ function generateTasks(project) {
   );
   editTaskBtns.forEach((editTaskBtn, index) => {
     editTaskBtn.addEventListener("click", () => {
+      const modal = document.querySelector("#taskEditModal");
+      openModal(modal);
       const taskItem = mainProject.getTask(index);
       const taskItemTitle = document.querySelector(
         "div#taskEditModal div.modal-header div.modal-title input#taskTitle"
@@ -180,7 +184,7 @@ function generateTasks(project) {
       updateTaskBtn.addEventListener("click", () => {
         taskItem.updateTask(
           taskItemTitle.value,
-          taskItemDescription.innerText,
+          taskItemDescription.value,
           taskItemDueDate.value,
           taskItemPriority.value
         );

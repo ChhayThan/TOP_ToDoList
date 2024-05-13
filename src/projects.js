@@ -5,11 +5,20 @@ function createProject(title) {
     addTask(task) {
       this.taskList.push(task);
     },
-    removeTask(task) {
-      const index = this.taskList.indexOf(task);
-
-      if (index !== -1) {
-        this.taskList.splice(index, 1);
+    removeTask(taskKey) {
+      for (let i = 0; i < this.taskList.length; i++) {
+        const taskItem = this.taskList[i];
+        if (taskItem.key === taskKey) {
+          this.taskList.splice(i, 1);
+        }
+      }
+    },
+    getTask(taskKey) {
+      for (let i = 0; i < this.taskList.length; i++) {
+        const taskItem = this.taskList[i];
+        if (taskItem.key === taskKey) {
+          return taskItem;
+        }
       }
     },
   };

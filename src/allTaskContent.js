@@ -1,4 +1,4 @@
-function renderAllTaskContent(mainProject) {
+function renderAllTaskContent() {
   const content = document.querySelector("div#content");
 
   const contentTitle = document.createElement("div");
@@ -10,12 +10,6 @@ function renderAllTaskContent(mainProject) {
 
   const contentTasks = document.createElement("div");
   contentTasks.classList.add("contentTasks");
-
-  const taskItems = generateTaskItemArray(mainProject);
-  taskItems.forEach((taskItem) => {
-    contentTasks.appendChild(taskItem);
-  });
-
   content.appendChild(contentTasks);
 
   document.body.appendChild(content);
@@ -48,16 +42,16 @@ function generateTaskItemArray(project) {
     const h3 = document.createElement("h3");
     h3.innerText = taskTitle;
     const p = document.createElement("p");
+    p.setAttribute("id", "task_description");
     p.innerText = taskDescription;
     const dueDate = document.createElement("p");
     dueDate.classList.add("taskDueDate");
     dueDate.innerText = taskDueDate;
     const taskProject = document.createElement("p");
     taskProject.classList.add("taskProjectTitle");
-    // if (taskProjectTitle !== "main") {
-    //   taskProject.innerText = `#${taskProjectTitle}`;
-    // }
-    taskProject.innerText = `#${taskProjectTitle}`;
+    if (taskProjectTitle !== "main") {
+      taskProject.innerText = `#${taskProjectTitle}`;
+    }
     taskContent.appendChild(h3);
     taskContent.appendChild(p);
     taskContent.appendChild(dueDate);
@@ -68,6 +62,7 @@ function generateTaskItemArray(project) {
     taskOptions.classList.add("taskOptions");
     const editBtn = document.createElement("button");
     editBtn.classList.add("editTask");
+    editBtn.setAttribute("data-modal-target", "#taskEditModal");
     editBtn.innerText = "edit";
     const removeBtn = document.createElement("button");
     removeBtn.classList.add("removeTask");
@@ -82,4 +77,4 @@ function generateTaskItemArray(project) {
   return taskItemArray;
 }
 
-export { renderAllTaskContent };
+export { renderAllTaskContent, generateTaskItemArray };

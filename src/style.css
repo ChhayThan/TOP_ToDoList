@@ -250,7 +250,8 @@ button.close-modal:hover {
   background-color: rgb(244, 244, 244);
 }
 
-button.add_task {
+button.add_task,
+button.update_task {
   background-color: var(--titleColor);
   font-weight: bold;
   color: white;
@@ -258,7 +259,8 @@ button.add_task {
   cursor: not-allowed;
 }
 
-button.add_task.active {
+button.add_task.active,
+button.update_task.active {
   cursor: pointer;
 }
 

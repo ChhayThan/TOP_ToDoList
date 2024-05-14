@@ -5,6 +5,12 @@ function renderModals() {
   const overlay = document.createElement("div");
   overlay.setAttribute("id", "overlay");
 
+  overlay.addEventListener("click", () => {
+    const modals = document.querySelectorAll(".modal.active");
+    modals.forEach((modal) => {
+      closeModal(modal);
+    });
+  });
   document.body.appendChild(taskModal);
   document.body.appendChild(projectModal);
   document.body.appendChild(taskEditModal);

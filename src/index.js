@@ -42,6 +42,14 @@ function initializePage() {
   generateTasks(mainProject);
   renderModals();
 
+  const allTaskBtn = document.querySelector("div.tasksOptions button.allTasks");
+
+  allTaskBtn.addEventListener("click", () => {
+    const contentTitle = document.querySelector("div.contentTitle h1");
+    contentTitle.innerText = `All tasks`;
+    generateTasks(mainProject);
+  });
+
   const taskTitle = document.querySelector("input#taskTitle");
   const addTaskBtn = document.querySelector("button.add_task");
 
@@ -75,6 +83,29 @@ function initializePage() {
       const taskModal = document.querySelector("div#taskModal");
       closeModal(taskModal);
       generateTasks(mainProject);
+    }
+  });
+
+  const projectTitle = document.querySelector("input#projectTitle");
+  const addProjectBtn = document.querySelector("button.add_project");
+
+  addProjectBtn.addEventListener("mouseover", () => {
+    if (projectTitle.value !== "") {
+      addProjectBtn.classList.add("active");
+    } else if (projectTitle.value === "") {
+      addProjectBtn.classList.remove("active");
+    }
+  });
+
+  addProjectBtn.addEventListener("click", () => {
+    if (addProjectBtn.classList.contains("active")) {
+      const projectTitle = document.querySelector("input#projectTitle").value;
+
+      const newProject = createNewChildProject(projectTitle);
+      console.log(newProject);
+      console.log(mainProject.childProjectList);
+      const projectModal = document.querySelector("div#projectModal");
+      closeModal(projectModal);
     }
   });
 }
@@ -213,3 +244,22 @@ function generateTasks(project) {
 }
 
 initializePage();
+
+function createNewChildProject(projectTitle) {
+  const newProject = mainProject.createChildProject(projectTitle);
+  const projectBtn = document.createElement("button");
+  projectBtn.classList.add("btn");
+  projectBtn.setAttribute("id", `# ${projectTitle}`);
+  projectBtn.innerText = `#${projectTitle}`;
+
+  projectBtn.addEventListener("click", () => {
+    const contentTitle = document.querySelector("div.contentTitle h1");
+    contentTitle.innerText = `# ${projectTitle}`;
+    generateTasks(newProject);
+  });
+
+  const projectOptions = document.querySelector("div.projectOptions");
+  projectOptions.appendChild(projectBtn);
+
+  return newProject;
+}

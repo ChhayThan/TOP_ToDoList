@@ -73,24 +73,28 @@ body {
   gap: 20px;
 }
 
-.tasksOptions {
+.tasksOptions,
+.projectOptions {
   display: flex;
   flex-direction: column;
 
   padding: 10px;
 }
 
-.tasksOptions h3 {
+.tasksOptions h3,
+.projectOptions h3 {
   color: var(--titleColor);
 }
 .tasksOptions,
+.projectOptions,
 .btn {
   background-color: rgb(246, 251, 255);
   border: none;
   font-size: 12pt;
   gap: 10px;
 }
-.tasksOptions .btn {
+.tasksOptions .btn,
+.projectOptions .btn {
   display: flex;
   flex-direction: row;
   justify-content: left;
@@ -100,11 +104,13 @@ body {
   border-radius: 10px;
 }
 
-.tasksOptions .btn:hover {
+.tasksOptions .btn:hover,
+.projectOptions .btn:hover {
   background-color: aliceblue;
 }
 
-.tasksOptions .btn:active {
+.tasksOptions .btn:active,
+.projectOptions .btn:active {
   background-color: aliceblue;
   box-shadow: 0 1px rgb(224, 241, 255);
   transform: translateY(4px);
@@ -251,6 +257,7 @@ button.close-modal:hover {
 }
 
 button.add_task,
+button.add_project,
 button.update_task {
   background-color: var(--titleColor);
   font-weight: bold;
@@ -260,11 +267,13 @@ button.update_task {
 }
 
 button.add_task.active,
+.modalBtn button.add_project.active,
 button.update_task.active {
   cursor: pointer;
 }
 
-button.add_task.active:hover {
+button.add_task.active:hover,
+button.add_project.active:hover {
   background-color: rgb(99, 182, 255);
 }
 

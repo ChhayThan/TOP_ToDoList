@@ -15,8 +15,8 @@ export default function renderSideBar() {
   const sidebarContent = document.createElement("div");
   sidebarContent.classList.add("sidebar_content");
 
-  const tasksOptions1 = document.createElement("div");
-  tasksOptions1.classList.add("tasksOptions");
+  const tasksOptions = document.createElement("div");
+  tasksOptions.classList.add("tasksOptions");
   const addTaskBtn = document.createElement("button");
   addTaskBtn.setAttribute("data-modal-target", "#taskModal");
   addTaskBtn.classList.add("btn");
@@ -30,23 +30,23 @@ export default function renderSideBar() {
   const overdueBtn = document.createElement("button");
   overdueBtn.classList.add("btn", "overDue");
   overdueBtn.innerText = "Overdue";
-  tasksOptions1.appendChild(addTaskBtn);
-  tasksOptions1.appendChild(allTasksBtn);
-  tasksOptions1.appendChild(todayTasksBtn);
-  tasksOptions1.appendChild(overdueBtn);
-  sidebarContent.appendChild(tasksOptions1);
+  tasksOptions.appendChild(addTaskBtn);
+  tasksOptions.appendChild(allTasksBtn);
+  tasksOptions.appendChild(todayTasksBtn);
+  tasksOptions.appendChild(overdueBtn);
+  sidebarContent.appendChild(tasksOptions);
 
-  const tasksOptions2 = document.createElement("div");
-  tasksOptions2.classList.add("tasksOptions");
+  const projectOptions = document.createElement("div");
+  projectOptions.classList.add("projectOptions");
   const projectsTitle = document.createElement("h3");
   projectsTitle.innerText = "My Projects";
   const addProjectBtn = document.createElement("button");
   addProjectBtn.setAttribute("data-modal-target", "#projectModal");
-  addProjectBtn.classList.add("btn", "add_project");
+  addProjectBtn.classList.add("btn");
   addProjectBtn.innerText = "Add Project";
-  tasksOptions2.appendChild(projectsTitle);
-  tasksOptions2.appendChild(addProjectBtn);
-  sidebarContent.appendChild(tasksOptions2);
+  projectOptions.appendChild(projectsTitle);
+  projectOptions.appendChild(addProjectBtn);
+  sidebarContent.appendChild(projectOptions);
 
   sidebar.appendChild(sidebarContent);
 

@@ -2,6 +2,7 @@ function createProject(title) {
   return {
     title,
     taskList: [],
+    childProjectList: [],
     addTask(task) {
       this.taskList.push(task);
     },
@@ -20,6 +21,12 @@ function createProject(title) {
           return taskItem;
         }
       }
+    },
+    createChildProject(projectTitle) {
+      const childProject = createProject(projectTitle);
+      this.childProjectList.push(childProject);
+
+      return childProject;
     },
   };
 }

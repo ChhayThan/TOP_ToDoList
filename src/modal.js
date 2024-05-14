@@ -302,7 +302,7 @@ function createProjectModal() {
   cancelBtn.classList.add("close-modal");
   cancelBtn.innerText = "Cancel";
   const addProjectBtn = document.createElement("button");
-  addProjectBtn.classList.add("add_task");
+  addProjectBtn.classList.add("add_project");
   addProjectBtn.innerText = "Add";
   modalBtn.appendChild(cancelBtn);
   modalBtn.appendChild(addProjectBtn);

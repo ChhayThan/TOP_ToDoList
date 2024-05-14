@@ -63,26 +63,36 @@ function initializePage() {
 
   addTaskBtn.addEventListener("click", () => {
     if (addTaskBtn.classList.contains("active")) {
-      const taskTitle = document.querySelector("input#taskTitle").value;
-      const taskDescription = document.querySelector(
-        "textarea#description"
-      ).value;
-      const dueDate = document.querySelector("input#dueDate").value;
-      const priorityClass = document.querySelector("select#priority").value;
-      const project = document.querySelector("select#project").value;
+      let taskTitleInput = document.querySelector("input#taskTitle");
+      let taskDescriptionInput = document.querySelector("textarea#description");
+      let dueDateInput = document.querySelector("input#dueDate");
+      let priorityClassInput = document.querySelector("select#priority");
+      let projectInput = document.querySelector("select#project");
+      let projectTitle = "";
+      if (projectInput.value === "none") {
+        projectTitle = "main";
+      } else {
+        projectTitle = projectInput.value;
+      }
 
       const taskToAdd = createTask(
-        taskTitle,
-        taskDescription,
-        dueDate,
-        priorityClass,
-        mainProject.title,
+        taskTitleInput.value,
+        taskDescriptionInput.value,
+        dueDateInput.value,
+        priorityClassInput.value,
+        projectTitle,
         mainProject.taskList.length
       );
       mainProject.addTask(taskToAdd);
+      console.log(taskToAdd);
       const taskModal = document.querySelector("div#taskModal");
       closeModal(taskModal);
       generateTasks(mainProject);
+
+      taskTitleInput.value = "";
+      taskDescriptionInput.value = "";
+      dueDateInput.value = "";
+      priorityClassInput.value = "High";
     }
   });
 
@@ -99,9 +109,10 @@ function initializePage() {
 
   addProjectBtn.addEventListener("click", () => {
     if (addProjectBtn.classList.contains("active")) {
-      const projectTitle = document.querySelector("input#projectTitle").value;
+      let projectTitleInput = document.querySelector("input#projectTitle");
 
-      const newProject = createNewChildProject(projectTitle);
+      const newProject = createNewChildProject(projectTitleInput.value);
+      projectTitleInput.value = "";
       console.log(newProject);
       console.log(mainProject.childProjectList);
       const projectModal = document.querySelector("div#projectModal");
@@ -249,8 +260,8 @@ function createNewChildProject(projectTitle) {
   const newProject = mainProject.createChildProject(projectTitle);
   const projectBtn = document.createElement("button");
   projectBtn.classList.add("btn");
-  projectBtn.setAttribute("id", `# ${projectTitle}`);
-  projectBtn.innerText = `#${projectTitle}`;
+  projectBtn.setAttribute("id", `#${projectTitle}`);
+  projectBtn.innerText = `# ${projectTitle}`;
 
   projectBtn.addEventListener("click", () => {
     const contentTitle = document.querySelector("div.contentTitle h1");

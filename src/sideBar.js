@@ -21,6 +21,7 @@ export default function renderSideBar() {
   addTaskBtn.setAttribute("data-modal-target", "#taskModal");
   addTaskBtn.classList.add("btn");
   addTaskBtn.innerText = "Add Task";
+
   const allTasksBtn = document.createElement("button");
   allTasksBtn.classList.add("btn", "allTasks");
   allTasksBtn.innerText = "All tasks";

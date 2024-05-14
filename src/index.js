@@ -13,7 +13,7 @@ const taskItem1 = createTask(
   "2024-05-12",
   "High",
   mainProject.title,
-  0
+  "999"
 );
 
 mainProject.addTask(taskItem1);
@@ -23,7 +23,7 @@ const taskItem2 = createTask(
   "2024-05-12",
   "Medium",
   mainProject.title,
-  1
+  "9999"
 );
 mainProject.addTask(taskItem2);
 const taskItem3 = createTask(
@@ -32,7 +32,7 @@ const taskItem3 = createTask(
   "2024-05-12",
   "Low",
   mainProject.title,
-  2
+  "99999"
 );
 mainProject.addTask(taskItem3);
 
@@ -41,6 +41,31 @@ function initializePage() {
   renderAllTaskContent();
   generateTasks(mainProject);
   renderModals();
+
+  const sideBarAddTaskBtn = document.querySelector(
+    "div.tasksOptions button[data-modal-target]"
+  );
+
+  sideBarAddTaskBtn.addEventListener("click", () => {
+    const projectSelect = document.querySelector("select#project");
+    projectSelect.innerHTML = "";
+    const mainOption = document.createElement("option");
+    mainOption.setAttribute("value", "main");
+    mainOption.innerText = "None";
+    projectSelect.appendChild(mainOption);
+
+    const childProjectList = mainProject.childProjectList;
+    if (childProjectList.length < 1) {
+      return;
+    }
+    childProjectList.forEach((childProject) => {
+      const option = document.createElement("option");
+      option.setAttribute("value", `${childProject.title}`);
+      option.innerText = `${childProject.title}`;
+
+      projectSelect.appendChild(option);
+    });
+  });
 
   const allTaskBtn = document.querySelector("div.tasksOptions button.allTasks");
 
@@ -84,10 +109,16 @@ function initializePage() {
         mainProject.taskList.length
       );
       mainProject.addTask(taskToAdd);
-      console.log(taskToAdd);
+      if (projectTitle !== "main") {
+        const childProject = mainProject.getChildProject(projectTitle);
+        childProject.addTask(taskToAdd);
+      }
       const taskModal = document.querySelector("div#taskModal");
       closeModal(taskModal);
       generateTasks(mainProject);
+
+      const contentTitle = document.querySelector("div.contentTitle h1");
+      contentTitle.innerText = `All Task`;
 
       taskTitleInput.value = "";
       taskDescriptionInput.value = "";
@@ -113,61 +144,52 @@ function initializePage() {
 
       const newProject = createNewChildProject(projectTitleInput.value);
       projectTitleInput.value = "";
-      console.log(newProject);
-      console.log(mainProject.childProjectList);
       const projectModal = document.querySelector("div#projectModal");
       closeModal(projectModal);
     }
   });
 }
 
-function clearContent() {
-  const content = document.querySelector("div#content");
-  while (content.hasChildNodes()) {
-    content.removeChild(content.lastChild);
-  }
-}
-
-function updateTaskInfo(task) {
-  const taskItemTitle = document.querySelector(
-    `div[data-taskkey="${task.key}"] div.taskContent h3`
-  );
-  taskItemTitle.innerText = task.title;
-  const taskItemDescription = document.querySelector(
-    `div[data-taskkey="${task.key}"] div.taskContent p#task_description`
-  );
-  taskItemDescription.innerText = task.description;
-  const taskItemDueDate = document.querySelector(
-    `div[data-taskkey="${task.key}"] div.taskContent p.taskDueDate`
-  );
-  taskItemDueDate.innerText = task.dueDate;
-  const taskItemProjectTitle = document.querySelector(
-    `div[data-taskkey="${task.key}"] div.taskContent p.taskProjectTitle`
-  );
-  if (task.projectTitle !== "main") {
-    taskItemProjectTitle.innerText = task.projectTitle;
-  }
-  const taskItemCheckBtn = document.querySelector(
-    `div[data-taskkey="${task.key}"] button.checkBtn`
-  );
-  taskItemCheckBtn.className = `checkBtn priority${task.priority}`;
-}
-
 function generateTasks(project) {
   const contentTasks = document.querySelector("div.contentTasks");
   contentTasks.innerHTML = "";
   const taskItems = generateTaskItemArray(project);
-  taskItems.forEach((taskItem) => {
-    contentTasks.appendChild(taskItem);
+  const taskList = project.taskList;
+  let keyIndex = [];
+  taskList.forEach((taskItem) => {
+    keyIndex.push(taskItem.key);
   });
+  taskItems.forEach((taskItem, index) => {
+    contentTasks.appendChild(taskItem);
+    const currentTask = mainProject.getTask(keyIndex[index]);
 
+    const currentTaskContent = document.querySelector(
+      `div[data-taskkey="${currentTask.key}"] div.taskContent`
+    );
+    const taskProject = document.createElement("p");
+    taskProject.classList.add("taskProjectTitle");
+    taskProject.addEventListener("click", () => {
+      const currentTaskProject = mainProject.getChildProject(
+        currentTask.projectTitle
+      );
+
+      const contentTitle = document.querySelector("div.contentTitle h1");
+      contentTitle.innerText = `# ${currentTask.projectTitle}`;
+      generateTasks(currentTaskProject);
+    });
+    if (currentTask.projectTitle !== "main") {
+      taskProject.innerText = `#${currentTask.projectTitle}`;
+      currentTaskContent.appendChild(taskProject);
+    }
+  });
   const checkTaskBtn = document.querySelectorAll(".checkBtn");
   const taskItemsSelector = document.querySelectorAll("div.taskItem");
 
   checkTaskBtn.forEach((button, index) => {
     button.addEventListener("click", () => {
-      const h3 = document.querySelector(`div[data-taskKey="${index}"] h3`);
-      console.log(index);
+      const h3 = document.querySelector(
+        `div[data-taskKey="${keyIndex[index]}"] h3`
+      );
       if (button.classList.contains("cancelled")) {
         button.classList.remove("cancelled");
         h3.classList.remove("cancelled");
@@ -180,7 +202,7 @@ function generateTasks(project) {
 
   taskItemsSelector.forEach((item, index) => {
     const itemBtns = document.querySelectorAll(
-      `div[data-taskKey="${index}"] .taskOptions > button`
+      `div[data-taskKey="${keyIndex[index]}"] .taskOptions > button`
     );
     item.addEventListener("mouseenter", () => {
       itemBtns.forEach((button) => {
@@ -200,9 +222,34 @@ function generateTasks(project) {
   );
   editTaskBtns.forEach((editTaskBtn, index) => {
     editTaskBtn.addEventListener("click", () => {
+      const projectSelect = document.querySelector(
+        "div#taskEditModal div.modal-content div.inputItem select#project"
+      );
+      projectSelect.innerHTML = "";
+      const mainOption = document.createElement("option");
+      mainOption.setAttribute("value", "main");
+      mainOption.innerText = "None";
+      projectSelect.appendChild(mainOption);
+
+      const childProjectList = mainProject.childProjectList;
+      if (childProjectList.length > 0) {
+        childProjectList.forEach((childProject) => {
+          const option = document.createElement("option");
+          option.setAttribute("value", `${childProject.title}`);
+          option.innerText = `${childProject.title}`;
+
+          projectSelect.appendChild(option);
+        });
+      }
+
       const modal = document.querySelector("#taskEditModal");
       openModal(modal);
-      const taskItem = mainProject.getTask(index);
+
+      const taskItemDiv = editTaskBtn.closest("[data-taskkey]");
+      const taskKey = taskItemDiv.getAttribute("data-taskkey");
+
+      const taskItem = mainProject.getTask(taskKey);
+
       const taskItemTitle = document.querySelector(
         "div#taskEditModal div.modal-header div.modal-title input#taskTitle"
       );
@@ -216,11 +263,17 @@ function generateTasks(project) {
       const taskItemPriority = document.querySelector(
         "div#taskEditModal div.modal-content div.inputItem select#priority"
       );
+      const taskItemProject = document.querySelector(
+        "div#taskEditModal div.modal-content div.inputItem select#project"
+      );
 
       taskItemTitle.value = taskItem.title;
       taskItemDescription.value = taskItem.description;
       taskItemDueDate.value = taskItem.dueDate;
       taskItemPriority.value = taskItem.priority;
+      taskItemProject.value = taskItem.projectTitle;
+
+      const oldProject = taskItem.projectTitle;
 
       const updateTaskBtn = document.querySelector("button.update_task.active");
       updateTaskBtn.addEventListener("click", () => {
@@ -228,9 +281,29 @@ function generateTasks(project) {
           taskItemTitle.value,
           taskItemDescription.value,
           taskItemDueDate.value,
-          taskItemPriority.value
+          taskItemPriority.value,
+          taskItemProject.value
         );
-        updateTaskInfo(taskItem);
+        if (oldProject !== "main" && taskItemProject.value !== "main") {
+          const taskOldProject = mainProject.getChildProject(oldProject);
+          taskOldProject.removeTask(taskItem.key);
+          const taskNewProject = mainProject.getChildProject(
+            taskItemProject.value
+          );
+          taskNewProject.addTask(taskItem);
+        } else if (
+          oldProject === "main" &&
+          taskItemProject.value !== oldProject
+        ) {
+          const taskNewProject = mainProject.getChildProject(
+            taskItemProject.value
+          );
+          taskNewProject.addTask(taskItem);
+        } else if (oldProject !== "main" && taskItemProject.value === "main") {
+          const taskOldProject = mainProject.getChildProject(oldProject);
+          taskOldProject.removeTask(taskItem.key);
+        }
+        generateTasks(project);
         const modal = document.querySelector("#taskEditModal");
         closeModal(modal);
       });

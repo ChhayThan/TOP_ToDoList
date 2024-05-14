@@ -28,6 +28,14 @@ function createProject(title) {
 
       return childProject;
     },
+    getChildProject(projectTitle) {
+      for (let i = 0; i < this.childProjectList.length; i++) {
+        let childProject = this.childProjectList[i];
+        if (childProject.title === projectTitle) {
+          return childProject;
+        }
+      }
+    },
   };
 }
 export default createProject;

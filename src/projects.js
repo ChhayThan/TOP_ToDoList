@@ -1,4 +1,4 @@
-function createProject(title) {
+export default function createProject(title) {
   return {
     title,
     taskList: [],
@@ -7,35 +7,20 @@ function createProject(title) {
       this.taskList.push(task);
     },
     removeTask(taskKey) {
-      for (let i = 0; i < this.taskList.length; i++) {
-        const taskItem = this.taskList[i];
-        if (taskItem.key === taskKey) {
-          this.taskList.splice(i, 1);
-        }
-      }
+      this.taskList = this.taskList.filter((task) => task.key !== taskKey);
     },
     getTask(taskKey) {
-      for (let i = 0; i < this.taskList.length; i++) {
-        const taskItem = this.taskList[i];
-        if (taskItem.key === taskKey) {
-          return taskItem;
-        }
-      }
+      return this.taskList.find((task) => task.key === taskKey);
     },
     createChildProject(projectTitle) {
       const childProject = createProject(projectTitle);
       this.childProjectList.push(childProject);
-
       return childProject;
     },
     getChildProject(projectTitle) {
-      for (let i = 0; i < this.childProjectList.length; i++) {
-        let childProject = this.childProjectList[i];
-        if (childProject.title === projectTitle) {
-          return childProject;
-        }
-      }
+      return this.childProjectList.find(
+        (childProject) => childProject.title === projectTitle
+      );
     },
   };
 }
-export default createProject;

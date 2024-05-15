@@ -76,20 +76,23 @@ function setupProjectButtonEvents() {
 }
 
 function populateProjectSelect() {
-  const projectSelect = document.querySelector("select#project");
-  if (!projectSelect) return;
+  const projectSelectAll = document.querySelectorAll("select#project");
+  if (!projectSelectAll) return;
 
-  projectSelect.innerHTML = "";
-  const mainOption = document.createElement("option");
-  mainOption.value = "main";
-  mainOption.innerText = "None";
-  projectSelect.appendChild(mainOption);
+  console.log(projectSelectAll);
 
-  mainProject.childProjectList.forEach((childProject) => {
-    const option = document.createElement("option");
-    option.value = childProject.title;
-    option.innerText = childProject.title;
-    projectSelect.appendChild(option);
+  projectSelectAll.forEach((projectSelect) => {
+    projectSelect.innerHTML = "";
+    const mainOption = document.createElement("option");
+    mainOption.value = "main";
+    mainOption.innerText = "None";
+    projectSelect.appendChild(mainOption);
+    mainProject.childProjectList.forEach((childProject) => {
+      const option = document.createElement("option");
+      option.value = childProject.title;
+      option.innerText = childProject.title;
+      projectSelect.appendChild(option);
+    });
   });
 }
 
@@ -218,7 +221,7 @@ function setupTaskInteractionEvents() {
   document
     .querySelectorAll("div.taskOptions button.removeTask")
     .forEach((deleteTaskBtn, index) => {
-      deleteTaskBtn.addEventListener("click", () => removeTask(index));
+      deleteTaskBtn.addEventListener("click", () => removeTask(deleteTaskBtn));
     });
 }
 
@@ -236,13 +239,6 @@ function toggleButtonVisibility(buttons, show) {
 }
 
 function openEditTaskModal(editTaskBtn) {
-  const projectSelect = document.querySelector(
-    "div#taskEditModal div.modal-content div.inputItem select#project"
-  );
-  if (!projectSelect) return;
-
-  populateProjectSelect();
-
   const modal = document.querySelector("#taskEditModal");
   openModal(modal);
 
@@ -253,6 +249,7 @@ function openEditTaskModal(editTaskBtn) {
   const taskItem = mainProject.getTask(taskKey);
   if (!taskItem) return;
 
+  populateProjectSelect(); // Ensure the project select options are updated
   populateTaskModal(taskItem);
 
   const updateTaskBtn = document.querySelector("button.update_task.active");
@@ -319,9 +316,13 @@ function handleUpdateTask(taskItem) {
   closeModal(document.querySelector("#taskEditModal"));
 }
 
-function removeTask(index) {
-  mainProject.removeTask(index);
-  document.querySelector(`div.taskItem[data-taskkey="${index}"]`).remove();
+function removeTask(deleteTaskBtn) {
+  const taskItemDiv = deleteTaskBtn.closest("[data-taskkey]");
+  if (!taskItemDiv) return;
+
+  const taskKey = taskItemDiv.getAttribute("data-taskkey");
+  mainProject.removeTask(taskKey);
+  taskItemDiv.remove();
 }
 
 function createNewChildProject(projectTitle) {
@@ -337,7 +338,6 @@ function createNewChildProject(projectTitle) {
   });
 
   document.querySelector("div.projectOptions").appendChild(projectBtn);
-  populateProjectSelect();
   return newProject;
 }
 

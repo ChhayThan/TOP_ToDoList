@@ -49,321 +49,295 @@ function initializePage() {
   generateTasks(mainProject);
   renderModals();
 
-  const sideBarAddTaskBtn = document.querySelector(
-    "div.tasksOptions button[data-modal-target]"
+  setupTaskButtonEvents();
+  setupProjectButtonEvents();
+}
+
+function setupTaskButtonEvents() {
+  document
+    .querySelector("div.tasksOptions button[data-modal-target]")
+    .addEventListener("click", populateProjectSelect);
+  document
+    .querySelector("div.tasksOptions button.allTasks")
+    .addEventListener("click", () => {
+      updateContentTitle("All tasks");
+      generateTasks(mainProject);
+    });
+
+  const addTaskBtn = document.querySelector("button.add_task");
+  addTaskBtn.addEventListener("mouseover", toggleButtonState);
+  addTaskBtn.addEventListener("click", addNewTask);
+}
+
+function setupProjectButtonEvents() {
+  const addProjectBtn = document.querySelector("button.add_project");
+  addProjectBtn.addEventListener("mouseover", toggleButtonState);
+  addProjectBtn.addEventListener("click", addNewProject);
+}
+
+function populateProjectSelect() {
+  const projectSelect = document.querySelector("select#project");
+  if (!projectSelect) return;
+
+  projectSelect.innerHTML = "";
+  const mainOption = document.createElement("option");
+  mainOption.value = "main";
+  mainOption.innerText = "None";
+  projectSelect.appendChild(mainOption);
+
+  mainProject.childProjectList.forEach((childProject) => {
+    const option = document.createElement("option");
+    option.value = childProject.title;
+    option.innerText = childProject.title;
+    projectSelect.appendChild(option);
+  });
+}
+
+function addNewTask() {
+  const addTaskBtn = document.querySelector("button.add_task");
+  if (!addTaskBtn.classList.contains("active")) return;
+
+  const taskTitleInput = document.querySelector("input#taskTitle");
+  const taskDescriptionInput = document.querySelector("textarea#description");
+  const dueDateInput = document.querySelector("input#dueDate");
+  const priorityClassInput = document.querySelector("select#priority");
+  const projectInput = document.querySelector("select#project");
+
+  const projectTitle =
+    projectInput.value === "none" ? "main" : projectInput.value;
+  const taskToAdd = createTask(
+    taskTitleInput.value,
+    taskDescriptionInput.value,
+    dueDateInput.value,
+    priorityClassInput.value,
+    projectTitle,
+    mainProject.taskList.length
   );
 
-  sideBarAddTaskBtn.addEventListener("click", () => {
-    const projectSelect = document.querySelector("select#project");
-    projectSelect.innerHTML = "";
-    const mainOption = document.createElement("option");
-    mainOption.setAttribute("value", "main");
-    mainOption.innerText = "None";
-    projectSelect.appendChild(mainOption);
+  mainProject.addTask(taskToAdd);
+  if (projectTitle !== "main") {
+    const childProject = mainProject.getChildProject(projectTitle);
+    childProject.addTask(taskToAdd);
+  }
 
-    const childProjectList = mainProject.childProjectList;
-    if (childProjectList.length < 1) {
-      return;
-    }
-    childProjectList.forEach((childProject) => {
-      const option = document.createElement("option");
-      option.setAttribute("value", `${childProject.title}`);
-      option.innerText = `${childProject.title}`;
+  closeModal(document.querySelector("div#taskModal"));
+  generateTasks(mainProject);
+  updateContentTitle("All tasks");
 
-      projectSelect.appendChild(option);
-    });
-  });
+  clearTaskInputs();
+}
 
-  const allTaskBtn = document.querySelector("div.tasksOptions button.allTasks");
-
-  allTaskBtn.addEventListener("click", () => {
-    const contentTitle = document.querySelector("div.contentTitle h1");
-    contentTitle.innerText = `All tasks`;
-    generateTasks(mainProject);
-  });
-
-  const taskTitle = document.querySelector("input#taskTitle");
-  const addTaskBtn = document.querySelector("button.add_task");
-
-  addTaskBtn.addEventListener("mouseover", () => {
-    if (taskTitle.value !== "") {
-      addTaskBtn.classList.add("active");
-    } else if (taskTitle.value === "") {
-      addTaskBtn.classList.remove("active");
-    }
-  });
-
-  addTaskBtn.addEventListener("click", () => {
-    if (addTaskBtn.classList.contains("active")) {
-      let taskTitleInput = document.querySelector("input#taskTitle");
-      let taskDescriptionInput = document.querySelector("textarea#description");
-      let dueDateInput = document.querySelector("input#dueDate");
-      let priorityClassInput = document.querySelector("select#priority");
-      let projectInput = document.querySelector("select#project");
-      let projectTitle = "";
-      if (projectInput.value === "none") {
-        projectTitle = "main";
-      } else {
-        projectTitle = projectInput.value;
-      }
-
-      const taskToAdd = createTask(
-        taskTitleInput.value,
-        taskDescriptionInput.value,
-        dueDateInput.value,
-        priorityClassInput.value,
-        projectTitle,
-        mainProject.taskList.length
-      );
-      mainProject.addTask(taskToAdd);
-      if (projectTitle !== "main") {
-        const childProject = mainProject.getChildProject(projectTitle);
-        childProject.addTask(taskToAdd);
-      }
-      const taskModal = document.querySelector("div#taskModal");
-      closeModal(taskModal);
-      generateTasks(mainProject);
-
-      const contentTitle = document.querySelector("div.contentTitle h1");
-      contentTitle.innerText = `All Task`;
-
-      taskTitleInput.value = "";
-      taskDescriptionInput.value = "";
-      dueDateInput.value = "";
-      priorityClassInput.value = "High";
-    }
-  });
-
-  const projectTitle = document.querySelector("input#projectTitle");
+function addNewProject() {
   const addProjectBtn = document.querySelector("button.add_project");
+  if (!addProjectBtn.classList.contains("active")) return;
 
-  addProjectBtn.addEventListener("mouseover", () => {
-    if (projectTitle.value !== "") {
-      addProjectBtn.classList.add("active");
-    } else if (projectTitle.value === "") {
-      addProjectBtn.classList.remove("active");
-    }
-  });
+  const projectTitleInput = document.querySelector("input#projectTitle");
+  createNewChildProject(projectTitleInput.value);
 
-  addProjectBtn.addEventListener("click", () => {
-    if (addProjectBtn.classList.contains("active")) {
-      let projectTitleInput = document.querySelector("input#projectTitle");
+  projectTitleInput.value = "";
+  closeModal(document.querySelector("div#projectModal"));
+}
 
-      const newProject = createNewChildProject(projectTitleInput.value);
-      projectTitleInput.value = "";
-      const projectModal = document.querySelector("div#projectModal");
-      closeModal(projectModal);
-    }
-  });
+function toggleButtonState(event) {
+  const button = event.target;
+  const inputId = button.classList.contains("add_task")
+    ? "taskTitle"
+    : "projectTitle";
+  const inputValue = document.querySelector(`input#${inputId}`).value;
+
+  button.classList.toggle("active", inputValue !== "");
+}
+
+function clearTaskInputs() {
+  document.querySelector("input#taskTitle").value = "";
+  document.querySelector("textarea#description").value = "";
+  document.querySelector("input#dueDate").value = "";
+  document.querySelector("select#priority").value = "High";
+}
+
+function updateContentTitle(title) {
+  document.querySelector("div.contentTitle h1").innerText = title;
 }
 
 function generateTasks(project) {
   const contentTasks = document.querySelector("div.contentTasks");
   contentTasks.innerHTML = "";
-  const taskItems = generateTaskItemArray(project);
-  const taskList = project.taskList;
-  let keyIndex = [];
-  taskList.forEach((taskItem) => {
-    keyIndex.push(taskItem.key);
-  });
-  taskItems.forEach((taskItem, index) => {
-    contentTasks.appendChild(taskItem);
-    const currentTask = mainProject.getTask(keyIndex[index]);
 
+  generateTaskItemArray(project).forEach((taskItem, index) => {
+    contentTasks.appendChild(taskItem);
+    const currentTask = project.getTask(project.taskList[index].key);
     const currentTaskContent = document.querySelector(
       `div[data-taskkey="${currentTask.key}"] div.taskContent`
     );
-    const taskProject = document.createElement("p");
-    taskProject.classList.add("taskProjectTitle");
-    taskProject.addEventListener("click", () => {
-      const currentTaskProject = mainProject.getChildProject(
-        currentTask.projectTitle
-      );
 
-      const contentTitle = document.querySelector("div.contentTitle h1");
-      contentTitle.innerText = `# ${currentTask.projectTitle}`;
-      generateTasks(currentTaskProject);
-    });
     if (currentTask.projectTitle !== "main") {
+      const taskProject = document.createElement("p");
+      taskProject.classList.add("taskProjectTitle");
       taskProject.innerText = `#${currentTask.projectTitle}`;
+      taskProject.addEventListener("click", () => {
+        const currentTaskProject = project.getChildProject(
+          currentTask.projectTitle
+        );
+        updateContentTitle(`# ${currentTask.projectTitle}`);
+        generateTasks(currentTaskProject);
+      });
       currentTaskContent.appendChild(taskProject);
     }
   });
-  const checkTaskBtn = document.querySelectorAll(".checkBtn");
-  const taskItemsSelector = document.querySelectorAll("div.taskItem");
 
-  checkTaskBtn.forEach((button, index) => {
-    button.addEventListener("click", () => {
-      const h3 = document.querySelector(
-        `div[data-taskKey="${keyIndex[index]}"] h3`
-      );
-      if (button.classList.contains("cancelled")) {
-        button.classList.remove("cancelled");
-        h3.classList.remove("cancelled");
-      } else {
-        button.classList.add("cancelled");
-        h3.classList.add("cancelled");
-      }
-    });
+  setupTaskInteractionEvents();
+}
+
+function setupTaskInteractionEvents() {
+  document.querySelectorAll(".checkBtn").forEach((button, index) => {
+    button.addEventListener("click", () => toggleTaskCompletion(button, index));
   });
 
-  taskItemsSelector.forEach((item, index) => {
+  document.querySelectorAll("div.taskItem").forEach((item, index) => {
+    const keyIndex = item.dataset.taskkey;
     const itemBtns = document.querySelectorAll(
-      `div[data-taskKey="${keyIndex[index]}"] .taskOptions > button`
+      `div[data-taskKey="${keyIndex}"] .taskOptions > button`
     );
-    item.addEventListener("mouseenter", () => {
-      itemBtns.forEach((button) => {
-        button.classList.add("showBtn");
-      });
-    });
 
-    item.addEventListener("mouseleave", () => {
-      itemBtns.forEach((button) => {
-        button.classList.remove("showBtn");
-      });
-    });
+    item.addEventListener("mouseenter", () =>
+      toggleButtonVisibility(itemBtns, true)
+    );
+    item.addEventListener("mouseleave", () =>
+      toggleButtonVisibility(itemBtns, false)
+    );
   });
 
-  const editTaskBtns = document.querySelectorAll(
-    "div.taskOptions button.editTask"
+  document
+    .querySelectorAll("div.taskOptions button.editTask")
+    .forEach((editTaskBtn) => {
+      editTaskBtn.addEventListener("click", () =>
+        openEditTaskModal(editTaskBtn)
+      );
+    });
+
+  document
+    .querySelectorAll("div.taskOptions button.removeTask")
+    .forEach((deleteTaskBtn, index) => {
+      deleteTaskBtn.addEventListener("click", () => removeTask(index));
+    });
+}
+
+function toggleTaskCompletion(button, index) {
+  const keyIndex = button.closest("div.taskItem").dataset.taskkey;
+  const taskTitle = document.querySelector(
+    `div[data-taskKey="${keyIndex}"] h3`
   );
-  editTaskBtns.forEach((editTaskBtn) => {
-    editTaskBtn.addEventListener("click", () => {
-      const projectSelect = document.querySelector(
-        "div#taskEditModal div.modal-content div.inputItem select#project"
-      );
-      if (!projectSelect) return;
+  button.classList.toggle("cancelled");
+  taskTitle.classList.toggle("cancelled");
+}
 
-      // Clear the project select options
-      projectSelect.innerHTML = "";
+function toggleButtonVisibility(buttons, show) {
+  buttons.forEach((button) => button.classList.toggle("showBtn", show));
+}
 
-      // Add the default option
-      const mainOption = document.createElement("option");
-      mainOption.setAttribute("value", "main");
-      mainOption.innerText = "None";
-      projectSelect.appendChild(mainOption);
-
-      // Populate project options
-      const childProjectList = mainProject.childProjectList;
-      if (childProjectList.length > 0) {
-        childProjectList.forEach((childProject) => {
-          const option = document.createElement("option");
-          option.setAttribute("value", childProject.title);
-          option.innerText = childProject.title;
-          projectSelect.appendChild(option);
-        });
-      }
-
-      // Open the modal
-      const modal = document.querySelector("#taskEditModal");
-      openModal(modal);
-
-      // Get task item data
-      const taskItemDiv = editTaskBtn.closest("[data-taskkey]");
-      if (!taskItemDiv) return; // Check if the element exists
-
-      const taskKey = taskItemDiv.getAttribute("data-taskkey");
-      const taskItem = mainProject.getTask(taskKey);
-      if (!taskItem) return; // Check if the task item exists
-
-      // Populate the modal with task item data
-      const taskItemTitle = document.querySelector(
-        "div#taskEditModal div.modal-header div.modal-title input#taskTitle"
-      );
-
-      const taskItemDescription = document.querySelector(
-        "div#taskEditModal div.modal-content div.inputItem textarea#description"
-      );
-      const taskItemDueDate = document.querySelector(
-        "div#taskEditModal div.modal-content div.inputItem input#dueDate"
-      );
-      const taskItemPriority = document.querySelector(
-        "div#taskEditModal div.modal-content div.inputItem select#priority"
-      );
-      const taskItemProject = document.querySelector(
-        "div#taskEditModal div.modal-content div.inputItem select#project"
-      );
-
-      taskItemTitle.value = taskItem.title;
-      taskItemDescription.value = taskItem.description;
-      taskItemDueDate.value = taskItem.dueDate;
-      taskItemPriority.value = taskItem.priority;
-      taskItemProject.value = taskItem.projectTitle;
-
-      const oldProject = taskItem.projectTitle;
-
-      // Update task button event listener
-      const updateTaskBtn = document.querySelector("button.update_task.active");
-      updateTaskBtn.removeEventListener("click", handleUpdateTask); // Remove any previous event listener
-      updateTaskBtn.addEventListener("click", handleUpdateTask, { once: true });
-
-      function handleUpdateTask() {
-        taskItem.updateTask(
-          taskItemTitle.value,
-          taskItemDescription.value,
-          taskItemDueDate.value,
-          taskItemPriority.value,
-          taskItemProject.value
-        );
-
-        if (oldProject !== "main" && taskItemProject.value !== "main") {
-          const taskOldProject = mainProject.getChildProject(oldProject);
-          taskOldProject.removeTask(taskItem.key);
-          const taskNewProject = mainProject.getChildProject(
-            taskItemProject.value
-          );
-          taskNewProject.addTask(taskItem);
-        }
-        if (oldProject === "main" && taskItemProject.value !== oldProject) {
-          const taskNewProject = mainProject.getChildProject(
-            taskItemProject.value
-          );
-          taskNewProject.addTask(taskItem);
-        }
-        if (oldProject !== "main" && taskItemProject.value === "main") {
-          const taskOldProject = mainProject.getChildProject(oldProject);
-          taskOldProject.removeTask(taskItem.key);
-        }
-
-        generateTasks(project);
-        closeModal(modal);
-      }
-    });
-  });
-
-  const deleteTaskBtns = document.querySelectorAll(
-    "div.taskOptions button.removeTask"
+function openEditTaskModal(editTaskBtn) {
+  const projectSelect = document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem select#project"
   );
-  deleteTaskBtns.forEach((deleteTaskBtn, index) => {
-    deleteTaskBtn.addEventListener("click", () => {
-      mainProject.removeTask(index);
-      const contentTasks = document.querySelector(
-        "div#content div.contentTasks"
-      );
-      const taskItemToBeRemoved = document.querySelector(
-        `div.taskItem[data-taskkey="${index}"]`
-      );
-      contentTasks.removeChild(taskItemToBeRemoved);
-    });
+  if (!projectSelect) return;
+
+  populateProjectSelect();
+
+  const modal = document.querySelector("#taskEditModal");
+  openModal(modal);
+
+  const taskItemDiv = editTaskBtn.closest("[data-taskkey]");
+  if (!taskItemDiv) return;
+
+  const taskKey = taskItemDiv.getAttribute("data-taskkey");
+  const taskItem = mainProject.getTask(taskKey);
+  if (!taskItem) return;
+
+  populateTaskModal(taskItem);
+
+  const updateTaskBtn = document.querySelector("button.update_task.active");
+  updateTaskBtn.removeEventListener("click", handleUpdateTask);
+  updateTaskBtn.addEventListener("click", () => handleUpdateTask(taskItem), {
+    once: true,
   });
+}
+
+function populateTaskModal(taskItem) {
+  document.querySelector(
+    "div#taskEditModal div.modal-header div.modal-title input#taskTitle"
+  ).value = taskItem.title;
+  document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem textarea#description"
+  ).value = taskItem.description;
+  document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem input#dueDate"
+  ).value = taskItem.dueDate;
+  document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem select#priority"
+  ).value = taskItem.priority;
+  document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem select#project"
+  ).value = taskItem.projectTitle;
+}
+
+function handleUpdateTask(taskItem) {
+  const taskTitleInput = document.querySelector(
+    "div#taskEditModal div.modal-header div.modal-title input#taskTitle"
+  ).value;
+  const taskDescriptionInput = document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem textarea#description"
+  ).value;
+  const dueDateInput = document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem input#dueDate"
+  ).value;
+  const priorityClassInput = document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem select#priority"
+  ).value;
+  const projectInput = document.querySelector(
+    "div#taskEditModal div.modal-content div.inputItem select#project"
+  ).value;
+  const oldProject = taskItem.projectTitle;
+
+  taskItem.updateTask(
+    taskTitleInput,
+    taskDescriptionInput,
+    dueDateInput,
+    priorityClassInput,
+    projectInput
+  );
+
+  if (oldProject !== "main" && projectInput !== "main") {
+    mainProject.getChildProject(oldProject).removeTask(taskItem.key);
+    mainProject.getChildProject(projectInput).addTask(taskItem);
+  } else if (oldProject === "main" && projectInput !== oldProject) {
+    mainProject.getChildProject(projectInput).addTask(taskItem);
+  } else if (oldProject !== "main" && projectInput === "main") {
+    mainProject.getChildProject(oldProject).removeTask(taskItem.key);
+  }
+
+  generateTasks(mainProject);
+  closeModal(document.querySelector("#taskEditModal"));
+}
+
+function removeTask(index) {
+  mainProject.removeTask(index);
+  document.querySelector(`div.taskItem[data-taskkey="${index}"]`).remove();
 }
 
 function createNewChildProject(projectTitle) {
   const newProject = mainProject.createChildProject(projectTitle);
   const projectBtn = document.createElement("button");
   projectBtn.classList.add("btn");
-  projectBtn.setAttribute("id", `#${projectTitle}`);
+  projectBtn.id = `#${projectTitle}`;
   projectBtn.innerText = `# ${projectTitle}`;
 
   projectBtn.addEventListener("click", () => {
-    const contentTitle = document.querySelector("div.contentTitle h1");
-    contentTitle.innerText = `# ${projectTitle}`;
+    updateContentTitle(`# ${projectTitle}`);
     generateTasks(newProject);
   });
 
-  const projectOptions = document.querySelector("div.projectOptions");
-  projectOptions.appendChild(projectBtn);
-
+  document.querySelector("div.projectOptions").appendChild(projectBtn);
+  populateProjectSelect();
   return newProject;
 }
 

@@ -7,34 +7,41 @@ import createTask from "./tasks";
 import createProject from "./projects";
 
 const mainProject = createProject("main");
-const taskItem1 = createTask(
-  "Task 1 with High priority",
-  "Description",
-  "2024-05-12",
-  "High",
-  mainProject.title,
-  "999"
-);
+const tasks = [
+  {
+    title: "Task 1 with High priority",
+    description: "Description",
+    dueDate: "2024-05-12",
+    priority: "High",
+    key: "999",
+  },
+  {
+    title: "Task 2 with Medium priority",
+    description: "Description",
+    dueDate: "2024-05-12",
+    priority: "Medium",
+    key: "9999",
+  },
+  {
+    title: "Task 3 with Low priority",
+    description: "Description",
+    dueDate: "2024-05-12",
+    priority: "Low",
+    key: "99999",
+  },
+];
 
-mainProject.addTask(taskItem1);
-const taskItem2 = createTask(
-  "Task 2 with Medium priority",
-  "Description",
-  "2024-05-12",
-  "Medium",
-  mainProject.title,
-  "9999"
-);
-mainProject.addTask(taskItem2);
-const taskItem3 = createTask(
-  "Task 3 with Low priority",
-  "Description",
-  "2024-05-12",
-  "Low",
-  mainProject.title,
-  "99999"
-);
-mainProject.addTask(taskItem3);
+tasks.forEach((task) => {
+  const taskItem = createTask(
+    task.title,
+    task.description,
+    task.dueDate,
+    task.priority,
+    mainProject.title,
+    task.key
+  );
+  mainProject.addTask(taskItem);
+});
 
 function initializePage() {
   renderSideBar();
@@ -220,36 +227,46 @@ function generateTasks(project) {
   const editTaskBtns = document.querySelectorAll(
     "div.taskOptions button.editTask"
   );
-  editTaskBtns.forEach((editTaskBtn, index) => {
+  editTaskBtns.forEach((editTaskBtn) => {
     editTaskBtn.addEventListener("click", () => {
       const projectSelect = document.querySelector(
         "div#taskEditModal div.modal-content div.inputItem select#project"
       );
+      if (!projectSelect) return;
+
+      // Clear the project select options
       projectSelect.innerHTML = "";
+
+      // Add the default option
       const mainOption = document.createElement("option");
       mainOption.setAttribute("value", "main");
       mainOption.innerText = "None";
       projectSelect.appendChild(mainOption);
 
+      // Populate project options
       const childProjectList = mainProject.childProjectList;
       if (childProjectList.length > 0) {
         childProjectList.forEach((childProject) => {
           const option = document.createElement("option");
-          option.setAttribute("value", `${childProject.title}`);
-          option.innerText = `${childProject.title}`;
-
+          option.setAttribute("value", childProject.title);
+          option.innerText = childProject.title;
           projectSelect.appendChild(option);
         });
       }
 
+      // Open the modal
       const modal = document.querySelector("#taskEditModal");
       openModal(modal);
 
+      // Get task item data
       const taskItemDiv = editTaskBtn.closest("[data-taskkey]");
+      if (!taskItemDiv) return; // Check if the element exists
+
       const taskKey = taskItemDiv.getAttribute("data-taskkey");
-
       const taskItem = mainProject.getTask(taskKey);
+      if (!taskItem) return; // Check if the task item exists
 
+      // Populate the modal with task item data
       const taskItemTitle = document.querySelector(
         "div#taskEditModal div.modal-header div.modal-title input#taskTitle"
       );
@@ -275,8 +292,12 @@ function generateTasks(project) {
 
       const oldProject = taskItem.projectTitle;
 
+      // Update task button event listener
       const updateTaskBtn = document.querySelector("button.update_task.active");
-      updateTaskBtn.addEventListener("click", () => {
+      updateTaskBtn.removeEventListener("click", handleUpdateTask); // Remove any previous event listener
+      updateTaskBtn.addEventListener("click", handleUpdateTask, { once: true });
+
+      function handleUpdateTask() {
         taskItem.updateTask(
           taskItemTitle.value,
           taskItemDescription.value,
@@ -284,6 +305,7 @@ function generateTasks(project) {
           taskItemPriority.value,
           taskItemProject.value
         );
+
         if (oldProject !== "main" && taskItemProject.value !== "main") {
           const taskOldProject = mainProject.getChildProject(oldProject);
           taskOldProject.removeTask(taskItem.key);
@@ -291,22 +313,21 @@ function generateTasks(project) {
             taskItemProject.value
           );
           taskNewProject.addTask(taskItem);
-        } else if (
-          oldProject === "main" &&
-          taskItemProject.value !== oldProject
-        ) {
+        }
+        if (oldProject === "main" && taskItemProject.value !== oldProject) {
           const taskNewProject = mainProject.getChildProject(
             taskItemProject.value
           );
           taskNewProject.addTask(taskItem);
-        } else if (oldProject !== "main" && taskItemProject.value === "main") {
+        }
+        if (oldProject !== "main" && taskItemProject.value === "main") {
           const taskOldProject = mainProject.getChildProject(oldProject);
           taskOldProject.removeTask(taskItem.key);
         }
+
         generateTasks(project);
-        const modal = document.querySelector("#taskEditModal");
         closeModal(modal);
-      });
+      }
     });
   });
 
@@ -327,8 +348,6 @@ function generateTasks(project) {
   });
 }
 
-initializePage();
-
 function createNewChildProject(projectTitle) {
   const newProject = mainProject.createChildProject(projectTitle);
   const projectBtn = document.createElement("button");
@@ -347,3 +366,5 @@ function createNewChildProject(projectTitle) {
 
   return newProject;
 }
+
+initializePage();

@@ -47,15 +47,9 @@ function generateTaskItemArray(project) {
     const dueDate = document.createElement("p");
     dueDate.classList.add("taskDueDate");
     dueDate.innerText = taskDueDate;
-    // const taskProject = document.createElement("p");
-    // taskProject.classList.add("taskProjectTitle");
-    // if (taskProjectTitle !== "main") {
-    //   taskProject.innerText = `#${taskProjectTitle}`;
-    // }
     taskContent.appendChild(h3);
     taskContent.appendChild(p);
     taskContent.appendChild(dueDate);
-    // taskContent.appendChild(taskProject);
     taskItem.appendChild(taskContent);
 
     const taskOptions = document.createElement("div");
